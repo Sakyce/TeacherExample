@@ -20,10 +20,10 @@ namespace TeacherExample
             Instance = this;
             Configuration.Setup();
             //TeacherPlugin.RequiresAssetsFolder(this); // Uncomment this when you'll use custom audios/sprites!!!
-            LoadingEvents.RegisterOnAssetsLoaded(OnassetsLoaded, false);
+            LoadingEvents.RegisterOnAssetsLoaded(OnAssetsLoaded, false);
         }
 
-        private void OnassetsLoaded()
+        private void OnAssetsLoaded()
         {
             // Create a NPC using MTMModdingAPI
             var teacher = ObjectCreators.CreateNPC<ExampleTeacher>(
