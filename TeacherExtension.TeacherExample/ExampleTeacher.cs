@@ -1,4 +1,5 @@
 ﻿using MTM101BaldAPI.Registers;
+using System;
 using TeacherAPI;
 using UnityEngine;
 
@@ -9,6 +10,10 @@ namespace TeacherExample
         // As Teacher inherits from Baldi, Make sure to override the method with this if you don't want his slap mechanic.
         // (If you forget, the teacher won't move at all)
         public override float DistanceCheck(float val) => val;
+
+        public override TeacherState GetAngryState() => new Example_Chase(this);
+
+        public override TeacherState GetHappyState() => new Example_Happy(this);
 
         public override void Initialize()
         {
@@ -75,7 +80,7 @@ namespace TeacherExample
         public override void Update()
         {
             base.Update();
-            example.Navigator.SetSpeed(example.Navigator.Speed + Time.deltaTime * 100f);
+            example.Navigator.SetSpeed(Math.Min(example.Navigator.Speed + Time.deltaTime * 100f, 50f)); // Maybe cap this lol
         }
 
 

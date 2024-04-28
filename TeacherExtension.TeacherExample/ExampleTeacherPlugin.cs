@@ -51,7 +51,7 @@ namespace TeacherExample
             {
                 // The SpawnWeight comes from the configuration. Dont hardcode it, it's not cool :(
                 floorObject.AddPotentialTeacher(ExampleTeacher, Configuration.SpawnWeight.Value);
-                print($"Added {ExampleTeacher.Character} to {floorName} (Floor {floorNumber})");
+                print($"Added {EnumExtensions.GetExtendedName<Character>((int) ExampleTeacher.Character)} to {floorName} (Floor {floorNumber})");
             }
         }
     }
