@@ -40,19 +40,17 @@
 		<PackageReference Include="UnityEngine.Modules" Version="2020.3.38" IncludeAssets="compile" />
 
 		<!-- My API is on NuGet!!! -->
-		<PackageReference Include="Sakyce.TeacherAPI.Analyzers" Version="*" /> 
+		<PackageReference Include="Sakyce.TeacherAPI" Version="0.0.*" />
+		<PackageReference Include="Sakyce.TeacherAPI.Analyzers" Version="0.0.*" />
 
 		<!-- Baldi dlls -->
 		<Reference Include="Assembly-CSharp">
 			<HintPath>$(LibPath)Assembly-CSharp-publicized.dll</HintPath>
 		</Reference>
 		
-		<Reference Include="MTM101BaldAPI"> <!-- MissingTexture-->
+		<!-- MissingTextureMan Modding API -->
+		<Reference Include="MTM101BaldAPI">
 			<HintPath>$(LibPath)MTM101BaldAPI.dll</HintPath>
-		</Reference>
-		
-		<Reference Include="TeacherAPI">
-		  <HintPath>..\..\MoreTeachers\TeacherAPI\bin\Release\netstandard2.0\TeacherAPI.dll</HintPath>
 		</Reference>
 	</ItemGroup>
 
