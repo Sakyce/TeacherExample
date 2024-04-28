@@ -15,14 +15,21 @@ namespace TeacherExample
         /// </code>
         /// </para>
         /// </summary>
-        public static ConfigEntry<int> SpawnWeight { get; internal set; }
+        public static ConfigEntry<int> ViktorSpawnWeight { get; internal set; }
+        public static ConfigEntry<int> AliceSpawnWeight { get; internal set; }
 
         internal static void Setup()
         {
-            SpawnWeight = ExampleTeacherPlugin.Instance.Config.Bind(
-                "ExampleTeacher", 
-                "SpawnWeight", 
-                10000,
+            ViktorSpawnWeight = ViktorPlugin.Instance.Config.Bind(
+                "Viktor",
+                "SpawnWeight",
+                100,
+                "More it is higher, more there is a chance of him spawning. (Defaults to 100. For comparison, Baldi weight is 100) (Requires Restart)"
+            );
+            AliceSpawnWeight = ViktorPlugin.Instance.Config.Bind(
+                "Alice",
+                "SpawnWeight",
+                100,
                 "More it is higher, more there is a chance of him spawning. (Defaults to 100. For comparison, Baldi weight is 100) (Requires Restart)"
             );
         }
