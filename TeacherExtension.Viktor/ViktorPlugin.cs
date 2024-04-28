@@ -1,4 +1,5 @@
 ﻿using BepInEx;
+using HarmonyLib;
 using MTM101BaldAPI;
 using MTM101BaldAPI.AssetTools;
 using MTM101BaldAPI.Components;
@@ -25,6 +26,7 @@ namespace TeacherExample
             Configuration.Setup();
             TeacherPlugin.RequiresAssetsFolder(this); 
             LoadingEvents.RegisterOnAssetsLoaded(OnAssetsLoaded, false);
+            new Harmony("sakyce.baldiplus.teacherextension.viktor").PatchAllConditionals();
         }
 
         private void OnAssetsLoaded()

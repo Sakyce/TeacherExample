@@ -5,7 +5,10 @@ using MTM101BaldAPI.Registers;
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.ComponentModel;
+using System.Xml.Schema;
 using TeacherAPI;
+using TeacherExtension.Viktor.Patches;
 using UnityEngine;
 using UnityEngine.SocialPlatforms;
 using UnityEngine.UIElements;
@@ -19,7 +22,10 @@ namespace TeacherExample
         public override float DistanceCheck(float val) => val;
 
         public bool IsQuiet { get; set; }
+        internal ViktorTilePollutionManager PollutionManager { get; private set; }
+
         public new CustomSpriteAnimator animator;
+        public bool firstTimeJacketTriggered = false;
         public override WeightedTeacherNotebook GetTeacherNotebookWeight() => new WeightedTeacherNotebook(this)
             .Weight(100)
             .Sprite(AssetManager.Get<Sprite>("notebook"))
@@ -64,6 +70,9 @@ namespace TeacherExample
             animator.animations.Add("angry", new CustomAnimation<Sprite>(new Sprite[] { AssetManager.Get<Sprite>("angry") }, 1));
             animator.Play("default", 1);
 
+            if (ec.GetComponent<ViktorTilePollutionManager>() == null) ec.gameObject.AddComponent<ViktorTilePollutionManager>();
+            PollutionManager = ec.GetComponent<ViktorTilePollutionManager>();
+
             AudMan.volumeMultiplier *= 2f;
 
             ReplaceMusic(AssetManager.Get<SoundObject>("school"));
@@ -74,13 +83,13 @@ namespace TeacherExample
         {
             StopCoroutine("StopDelay");
             AudMan.PlaySingle(AssetManager.Get<SoundObject>("walk"));
-            Navigator.SetSpeed(Speed * 2f);
+            Navigator.SetSpeed(Speed * 3f);
             StartCoroutine(StopDelay());
         }
 
         private IEnumerator StopDelay()
         {
-            var time = 1f;
+            var time = 0.7f;
             while (time > 0)
             {
                 time -= Time.deltaTime * ec.NpcTimeScale;
@@ -152,8 +161,12 @@ namespace TeacherExample
             base.Enter();
             viktor.Navigator.ClearDestination();
             viktor.Navigator.SetSpeed(0f);
-            viktor.AudMan.QueueRandomAudio(Viktor.AssetManager.Get<SoundObject[]>("jackets"));
+            if (viktor.firstTimeJacketTriggered)
+                viktor.AudMan.QueueRandomAudio(Viktor.AssetManager.Get<SoundObject[]>("jackets"));
+            else viktor.AudMan.QueueAudio(Viktor.AssetManager.Get<SoundObject[]>("jackets")[0]);
             viktor.StopCoroutine("StopDelay");
+
+            viktor.firstTimeJacketTriggered = true;
 
             GottaSweep gottaSweep = null;
             Vector3 loc = viktor.transform.position;
@@ -178,7 +191,7 @@ namespace TeacherExample
             if (!viktor.AudMan.AnyAudioIsPlaying)
             {
                 goingToCloset = true;
-                viktor.Navigator.SetSpeed(25);
+                viktor.Navigator.SetSpeed(20f);
             }
         }
 
@@ -196,7 +209,7 @@ namespace TeacherExample
         public override void Enter()
         {
             base.Enter();
-            delay = viktor.Delay * 1.2f;
+            delay = 4f; // First time delay to avoid surprises
             viktor.animator.SetDefaultAnimation("angry", 1);
             viktor.animator.Play("angry", 1);
         }
@@ -209,7 +222,15 @@ namespace TeacherExample
             {
                 ChangeNavigationState(new NavigationState_TargetPlayer(viktor, 0, viktor.players[0].transform.position));
                 viktor.Slap();
-                delay = viktor.Delay;
+                delay = viktor.Delay * 2f;
+            }
+
+            IntVector2 gridPosition = IntVector2.GetGridPosition(viktor.transform.position);
+            Cell cell = viktor.ec.CellFromPosition(gridPosition);
+            if (cell != null && viktor.PollutionManager.IsCellPolluted(cell))
+            {
+                viktor.StopCoroutine("StopDelay");
+                viktor.behaviorStateMachine.ChangeState(new Viktor_Jacket(viktor, this));
             }
         }
 
@@ -228,7 +249,15 @@ namespace TeacherExample
             // Obvious
             if (viktor.IsTouchingPlayer(other))
             {
-                viktor.CaughtPlayer(other.GetComponent<PlayerManager>());
+                var plr = other.GetComponent<PlayerManager>();
+                var itm = plr.itm;
+                if (itm.Has(Items.Apple))
+                {
+                    itm.Remove(Items.Apple);
+                    viktor.behaviorStateMachine.ChangeState(new Viktor_Jacket(viktor, this));
+                    return;
+                }
+                viktor.CaughtPlayer(plr);
             }
         }
     }
