@@ -44,7 +44,6 @@ namespace TeacherExtension.Viktor.Patches
             var pollutionManager = __instance.ec.GetComponent<ViktorTilePollutionManager>();
             if (pollutionManager != null)
             {
-                Debug.Log("pollution manager found");
                 var gridPosition = IntVector2.GetGridPosition(__instance.pos);
                 pollutionManager.PolluteCell(__instance.ec.CellFromPosition(gridPosition), __instance.setTime);
             }
