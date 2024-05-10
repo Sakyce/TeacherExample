@@ -2,9 +2,7 @@
 using MTM101BaldAPI.AssetTools;
 using MTM101BaldAPI.Components;
 using System.Linq;
-using System.Numerics;
 using TeacherAPI;
-using TeacherAPI.utils;
 using TeacherExample;
 using UnityEngine;
 

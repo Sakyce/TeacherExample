@@ -40,7 +40,7 @@
 		<PackageReference Include="UnityEngine.Modules" Version="2020.3.38" IncludeAssets="compile" />
 
 		<!-- My API is on NuGet!!! -->
-		<PackageReference Include="Sakyce.TeacherAPI" Version="0.0.*" />
+		<PackageReference Include="Sakyce.TeacherAPI" Version="0.1.*" />
 		<PackageReference Include="Sakyce.TeacherAPI.Analyzers" Version="0.0.*" />
 
 		<!-- Baldi dlls -->

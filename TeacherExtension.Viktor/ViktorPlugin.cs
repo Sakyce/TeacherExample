@@ -3,6 +3,7 @@ using HarmonyLib;
 using MTM101BaldAPI;
 using MTM101BaldAPI.AssetTools;
 using MTM101BaldAPI.Components;
+using MTM101BaldAPI.ObjectCreation;
 using MTM101BaldAPI.Registers;
 using TeacherAPI;
 using TeacherExtension.Viktor;
@@ -34,34 +35,37 @@ namespace TeacherExample
             Viktor.LoadAssets();
             Alice.LoadAssets();
 
-            var viktor = ObjectCreators.CreateNPC<Viktor>(
-                "Viktor",
-                EnumExtensions.ExtendEnum<Character>("Viktor"),
-                ObjectCreators.CreatePosterObject(new UnityEngine.Texture2D[] { AssetLoader.TextureFromMod(this, "viktor", "poster.png") }),
-                maxAudioDistance: 500
-            );
+            var viktor = new NPCBuilder<Viktor>(Info)
+                .SetName("Viktor")
+                .SetEnum("Viktor")
+                .SetPoster(ObjectCreators.CreatePosterObject(new UnityEngine.Texture2D[] { AssetLoader.TextureFromMod(this, "viktor", "poster.png") }))
+                .AddLooker()
+                .AddTrigger()
+                .SetMinMaxAudioDistance(0, 500)
+                .SetMetaTags(new string[] { "Teacher" })
+                .Build();
             viktor.audMan = viktor.GetComponent<AudioManager>();
             CustomSpriteAnimator animator = viktor.gameObject.AddComponent<CustomSpriteAnimator>();
             animator.spriteRenderer = viktor.spriteRenderer[0];
             viktor.animator = animator;
 
-            // Add it to the meta storage and register it to TeacherAPI (very important!)
-            NPCMetaStorage.Instance.Add(new NPCMetadata(Info, new NPC[] { viktor }, "Viktor", NPCFlags.StandardAndHear));
             TeacherPlugin.RegisterTeacher(viktor);
             Viktor = viktor;
 
-            var alice = ObjectCreators.CreateNPC<Alice>(
-                "Alice",
-                EnumExtensions.ExtendEnum<Character>("Alice"),
-                ObjectCreators.CreateCharacterPoster(AssetLoader.TextureFromMod(this, "alice", "poster.png"), "Alice", "She loves her students! But she doesn't feels well lately..." ),
-                maxAudioDistance: 500
-            );
+            var alice = new NPCBuilder<Alice>(Info)
+                .SetName("Alice")
+                .SetEnum("Alice")
+                .SetPoster(ObjectCreators.CreateCharacterPoster(AssetLoader.TextureFromMod(this, "alice", "poster.png"), "Alice", "She loves her students! But she doesn't feels well lately..."))
+                .AddLooker()
+                .AddTrigger()
+                .SetMinMaxAudioDistance(0, 500)
+                .SetMetaTags(new string[] { "Teacher" })
+                .Build();
             alice.audMan = alice.GetComponent<AudioManager>();
             CustomSpriteAnimator animator2 = alice.gameObject.AddComponent<CustomSpriteAnimator>();
             animator2.spriteRenderer = alice.spriteRenderer[0];
             alice.animator = animator2;
 
-            NPCMetaStorage.Instance.Add(new NPCMetadata(Info, new NPC[] { alice }, "Alice", NPCFlags.StandardAndHear));
             TeacherPlugin.RegisterTeacher(alice);
             Alice = alice;
 
@@ -76,6 +80,7 @@ namespace TeacherExample
                 floorObject.AddPotentialTeacher(Viktor, Configuration.ViktorSpawnWeight.Value);
                 floorObject.AddPotentialTeacher(Alice, Configuration.AliceSpawnWeight.Value);
                 floorObject.AddPotentialAssistingTeacher(Viktor, Configuration.ViktorSpawnWeight.Value);
+                floorObject.AddPotentialAssistingTeacher(Alice, Configuration.AliceSpawnWeight.Value);
                 print($"Added {Viktor.Character} to {floorName} (Floor {floorNumber})");
                 print($"Added {Alice.Character} to {floorName} (Floor {floorNumber})");
             }
